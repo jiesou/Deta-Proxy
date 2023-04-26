@@ -9,11 +9,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Deta Space Deployment Github Action
-        uses: neobrains/space-deployment-github-action@v0.5
-        with:
-          access_token: ${{ secrets.DETA_ACCESS_TOKEN }}
-          project_id: ${{ secrets.DETA_PROJECT_ID }}
-          space_push: true
-          space_release: true
-          list_on_discovery: true
+      - name: Init Deta CL
+        run: |
+          curl -fsSL https://get.deta.dev/space-cli.sh | sh
+          echo "$HOME/.detaspace/bin" >> $GITHUB_PATH
+          echo "SPACE_ACCESS_TOKEN=${{ secrets.DETA_ACCESS_TOKEN }}" >> $GITHUB_ENV
+      - name: Push and Release
+        run: |
+          space link --id "${{ secrets.DETA_PROJECT_ID }}"
+          space push
+          space release --listed --confirm 
