@@ -1,7 +1,7 @@
-# Deta-Proxy
-Simple HTTP Network Proxy in Deta
-
-[Deta Space App Page](https://deta.space/discovery/r/jc5yxdgfvqgfc2nn)
+---
+app_name: Proxy
+tagline: Simple HTTP Network Proxy in Deta
+---
 
 Example:
 
