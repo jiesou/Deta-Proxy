@@ -33,6 +33,7 @@ app.all('*', (req, res) => {
     
     try {
       let req_body = '';
+      // body in request
       req.on('data', (chunk) => {
         req_body += chunk;
       });
@@ -42,9 +43,8 @@ app.all('*', (req, res) => {
           headers: req_headers,
           body: req_body
         });
-        
-        // forward headers and body
         res.status(response.status);
+        // body in response
         response.body.pipe(res);
       });
     } catch (e) {

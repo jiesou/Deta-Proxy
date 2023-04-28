@@ -19,4 +19,6 @@ equals to
 https://xxxx-deta.app/http://example.com
 ```
 
-Supports forwarding headers, body (readable stream) and so on.
+Supports forwarding headers (only in request), body (include readable stream, binary) and so on.
+
+Supports special "referer" header for i.pximg.net (anti-anti-hotlink)
