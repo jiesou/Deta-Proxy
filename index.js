@@ -11,29 +11,44 @@ function throwRequest(res, error) {
     });
 }
 
-app.all('*', async (req, res) => {
+app.disable('x-powered-by');
+
+app.all('*', (req, res) => {
     // remove first slash
-    let url = req.path.substr(1);
-    if (!url) throwRequest(res, 'nullValue');
+    let req_url = req.path.substr(1);
+    if (!req_url) throwRequest(res, 'nullValue');
 
     // add http:// and limit :// number of slashes
-    url = url.replace(/^(http(s?):\/+)?/, 'http$2://');
+    req_url = req_url.replace(/^(http(s?):\/+)?/, 'http$2://');
     const req_headers = req.headers;
     // remove referer in headers
     if (req_headers['referer']) delete req_headers['referer'];
     // turn headers.host into the host of target
-    req_headers['host'] = new URL(url).host;
+    req_headers['host'] = new URL(req_url).host;
+
+    /* special list */
+    if (req_headers['host'] === "i.pximg.net") {
+      req_headers['referer'] = "https://www.pixiv.net";
+    }
     
     try {
-        const response = await fetch(url, {
+      let req_body = '';
+      req.on('data', (chunk) => {
+        req_body += chunk;
+      });
+      req.on('end', async () => {
+        const response = await fetch(req_url, {
           method: req.method,
           headers: req_headers,
-          body: req.body
+          body: req_body
         });
-        res.writeHead(response.status, response.headers);
+        
+        // forward headers and body
+        res.status(response.status);
         response.body.pipe(res);
+      });
     } catch (e) {
-        throwRequest(res, "fetch error:" + e);
+      throwRequest(res, e);
     }
 });
 
